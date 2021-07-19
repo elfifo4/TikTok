@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.app.tiktok.R
@@ -49,19 +50,29 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     }
 
     private fun setData() {
-        text_view_account_handle.setTextOrHide(value = storiesDataModel?.userName)
-        text_view_video_description.setTextOrHide(value = storiesDataModel?.storyDescription)
-        text_view_music_title.setTextOrHide(value = storiesDataModel?.musicCoverTitle)
+//        text_view_account_handle.setTextOrHide(value = storiesDataModel?.userName)
+//        text_view_video_description.setTextOrHide(value = storiesDataModel?.storyDescription)
+//        text_view_music_title.setTextOrHide(value = storiesDataModel?.musicCoverTitle)
+        text_view_music_title.setTextOrHide(value = storiesDataModel?.userName)
 
-        image_view_option_comment_title?.text = storiesDataModel?.commentsCount?.formatNumberAsReadableFormat()
-        image_view_option_like_title?.text = storiesDataModel?.likesCount?.formatNumberAsReadableFormat()
+        image_view_option_comment_title?.text =
+            storiesDataModel?.commentsCount?.formatNumberAsReadableFormat()
+        image_view_option_like_title?.text =
+            storiesDataModel?.likesCount?.formatNumberAsReadableFormat()
 
-        image_view_profile_pic?.loadCenterCropImageFromUrl(storiesDataModel?.userProfilePicUrl)
+//        image_view_profile_pic?.loadCenterCropImageFromUrl(storiesDataModel?.userProfilePicUrl)
+
+        artwork_image_view.loadCenterCropImageFromUrl(storiesDataModel?.sampleImage)
+
+        artwork_image_view.setOnClickListener {
+            Toast.makeText(requireContext(), "id: " + storiesDataModel?.storyId, Toast.LENGTH_SHORT)
+                .show()
+        }
 
         text_view_music_title.isSelected = true
 
         val simplePlayer = getPlayer()
-        player_view_story.player = simplePlayer
+//        player_view_story.player = simplePlayer
 
         storyUrl = storiesDataModel?.storyUrl
         storyUrl?.let { prepareMedia(it) }
@@ -82,7 +93,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         super.onDestroy()
     }
 
-    private val playerCallback: Player.EventListener? = object: Player.EventListener {
+    private val playerCallback: Player.EventListener? = object : Player.EventListener {
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
             logError("onPlayerStateChanged playbackState: $playbackState")
         }
@@ -94,10 +105,14 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
     private fun prepareVideoPlayer() {
         simplePlayer = ExoPlayerFactory.newSimpleInstance(context)
-        cacheDataSourceFactory = CacheDataSourceFactory(simpleCache,
+        cacheDataSourceFactory = CacheDataSourceFactory(
+            simpleCache,
             DefaultHttpDataSourceFactory(
-                Util.getUserAgent(context,
-                "exo"))
+                Util.getUserAgent(
+                    context,
+                    "exo"
+                )
+            )
         )
     }
 
@@ -113,7 +128,8 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
         val uri = Uri.parse(linkUrl)
 
-        val mediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory).createMediaSource(uri)
+        val mediaSource =
+            ProgressiveMediaSource.Factory(cacheDataSourceFactory).createMediaSource(uri)
 
         simplePlayer?.prepare(mediaSource, true, true)
         simplePlayer?.repeatMode = Player.REPEAT_MODE_ONE

@@ -9,6 +9,7 @@ data class StoriesDataModel(
     val storyUrl: String,
     val storyThumbUrl: String? = null,
     val storyDescription: String? = null,
+    val sampleImage: String? = null,
     val musicCoverTitle: String,
     val musicCoverImageLink: String? = null,
     val userId: String,

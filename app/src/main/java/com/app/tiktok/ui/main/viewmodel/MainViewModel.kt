@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 
 class MainViewModel @ViewModelInject constructor(private val dataRepository: DataRepository): ViewModel() {
-    fun getDataList(): LiveData<ResultData<ArrayList<StoriesDataModel>?>> {
+    fun getDataList(): LiveData<ResultData<List<StoriesDataModel>?>> {
         return flow {
             emit(ResultData.Loading())
             emit(ResultData.Success(dataRepository.getStoriesData()))
